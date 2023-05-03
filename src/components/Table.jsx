@@ -1,14 +1,39 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { PlanetsContext } from '../context/PlanetsProvider';
 import './Table.css';
 
 function Table() {
   const { planetData } = useContext(PlanetsContext);
-
+  const [filterPlanets, setFilterPlanets] = useState();
+  const [filterName, setFilterName] = useState('');
   const [filters, setFilters] = useState({
-    filterName: '',
-    filterColunm: '',
+    filterColunm: 'population',
+    operator: 'maior que',
+    operatorValue: '0',
   });
+
+  useEffect(() => {
+    const handlePlanets = () => {
+      setFilterPlanets(planetData);
+    };
+    handlePlanets();
+  }, []);
+
+  const handleChangePlanets = ({ target }) => {
+    setFilterName(target.value);
+    const data = planetData.filter(({ name }) => name
+      .includes(filterName));
+    setFilterPlanets(data);
+  };
+
+  useEffect(() => {
+    const handleFilterName = () =>{
+      const data = planetData.filter(({ name }) => name
+        .includes(filterName));
+      setFilterPlanets(data);
+    };
+    handleFilterName();
+  }, [filterName, planetData]);
 
   const handleChange = ({ target }) => {
     const { name, value } = target;
@@ -22,15 +47,29 @@ function Table() {
     'orbital_period', 'diameter',
     'rotation_period', 'surface_water'];
 
-  const filterPlanets = planetData.filter(({ name }) => name
-    .includes(filters.filterName));
+  const filterOperator = ['maior que',
+    'menor que',
+    'igual a'];
+
+  const filterData = () => {
+    const { filterColunm, operator, operatorValue } = filters;
+    const filtered = planetData.filter((planet) => {
+      if (operator === 'maior que') {
+        return (+planet[filterColunm]) > (+operatorValue);
+      } if (operator === 'menor que') {
+        return (+planet[filterColunm]) < (+operatorValue);
+      }
+      return (+planet[filterColunm]) === (+operatorValue);
+    });
+    setFilterPlanets(filtered);
+  };
 
   return (
     <div>
       <input
         data-testid="name-filter"
         type="text"
-        onChange={ handleChange }
+        onChange={ handleChangePlanets }
         value={ filters.filterName }
         name="filterName"
       />
@@ -38,7 +77,7 @@ function Table() {
         <label>
           Coluna:
           <select
-            data-testid="name-filter"
+            data-testid="column-filter"
             type="text"
             onChange={ handleChange }
             value={ filters.filterColunm }
@@ -47,6 +86,26 @@ function Table() {
             { filterSelect.map((fill) => (<option key={ fill }>{ fill }</option>))}
           </select>
         </label>
+        <label>
+          Operador:
+          <select
+            data-testid="comparison-filter"
+            type="text"
+            onChange={ handleChange }
+            value={ filters.operator }
+            name="operator"
+          >
+            { filterOperator.map((fill) => (<option key={ fill }>{ fill }</option>))}
+          </select>
+        </label>
+        <input
+          data-testid="value-filter"
+          type="text"
+          onChange={ handleChange }
+          value={ filters.operatorValue }
+          name="operatorValue"
+        />
+        <button data-testid="button-filter" onClick={ filterData }>Filtrar</button>
       </div>
       <table className="table">
         <thead>
