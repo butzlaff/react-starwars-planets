@@ -6,6 +6,7 @@ function Table() {
   const { planetData } = useContext(PlanetsContext);
   const [filterPlanets, setFilterPlanets] = useState();
   const [filterName, setFilterName] = useState('');
+  const [filteredPlanets, setFilteredPlanets] = useState([]);
   const [filters, setFilters] = useState({
     filterColunm: 'population',
     operator: 'maior que',
@@ -17,7 +18,7 @@ function Table() {
       setFilterPlanets(planetData);
     };
     handlePlanets();
-  }, []);
+  }, [planetData]);
 
   const handleChangePlanets = ({ target }) => {
     setFilterName(target.value);
@@ -27,7 +28,7 @@ function Table() {
   };
 
   useEffect(() => {
-    const handleFilterName = () =>{
+    const handleFilterName = () => {
       const data = planetData.filter(({ name }) => name
         .includes(filterName));
       setFilterPlanets(data);
@@ -53,7 +54,14 @@ function Table() {
 
   const filterData = () => {
     const { filterColunm, operator, operatorValue } = filters;
-    const filtered = planetData.filter((planet) => {
+    setFilteredPlanets((prevState) => [...prevState, { ...filters }]);
+    let planets = [];
+    if (filteredPlanets.length > 0) {
+      planets = filterPlanets.map((item) => item);
+    } else {
+      planets = planetData.map((item) => item);
+    }
+    const filtered = planets.filter((planet) => {
       if (operator === 'maior que') {
         return (+planet[filterColunm]) > (+operatorValue);
       } if (operator === 'menor que') {
@@ -106,6 +114,16 @@ function Table() {
           name="operatorValue"
         />
         <button data-testid="button-filter" onClick={ filterData }>Filtrar</button>
+      </div>
+      <div className="filters">
+        {filteredPlanets.map((filter) => (
+          <div key={ filter.filterColunm }>
+            <span>{filter.filterColunm}</span>
+            <span>{filter.operator}</span>
+            <span>{filter.operatorValue}</span>
+            <button>Delete</button>
+          </div>
+        ))}
       </div>
       <table className="table">
         <thead>
