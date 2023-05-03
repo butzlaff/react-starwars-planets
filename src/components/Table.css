@@ -1,0 +1,78 @@
+.table {
+  border: 1px solid #ccc;
+  border-collapse: collapse;
+  font-family: Arial , sans-serif;
+  font-size: 14px;
+  width: 100%;
+}
+
+.table__header {
+  background-color: #f2f2f2;
+  border: 1px solid #ccc;
+  color: #333;
+  font-weight: 700;
+  padding: 10px;
+  text-align: left;
+}
+
+.table__row:nth-child( even ) {
+  background-color: #f9f9f9;
+}
+
+.table__cell {
+  border: 1px solid #ccc;
+  color: #333;
+  padding: 10px;
+  text-align: left;
+}
+
+.table__cell--buttons {
+  text-align: center;
+}
+
+.table__button {
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 5px 10px;
+}
+
+.table__button--edit {
+  background-color: #4caf50;
+  color: white;
+  margin-right: 5px;
+  width: 80px;
+}
+
+.table__button--delete {
+  background-color: #f44336;
+  color: white;
+  width: 80px;
+}
+
+@media screen and ( max-width : 767px ) {
+
+  .table__header, .table__cell {
+    display: block;
+  }
+
+  .table__header {
+    text-align: center;
+  }
+
+  .table__cell--buttons {
+    text-align: left;
+  }
+
+  .table__cell:before {
+    content: attr(data-label);
+    float: left;
+    font-weight: 700;
+  }
+
+  .table__button--edit, .table__button--delete {
+    margin-bottom: 5px;
+    width: 100%;
+  }
+}
