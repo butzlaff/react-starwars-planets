@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import './App.css';
-import Table from './components/Table';
+import StarWars from './components/StarWars';
 import { PlanetsContext } from './context/PlanetsProvider';
 
 function App() {
@@ -9,7 +9,7 @@ function App() {
     <>
       <span>Hello, App!</span>
       { loading && <p>Carregando dados...</p>}
-      { !loading && <Table />}
+      { !loading && <StarWars />}
     </>
   );
 }
