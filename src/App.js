@@ -4,7 +4,7 @@ import Table from './components/Table';
 import { PlanetsContext } from './context/PlanetsProvider';
 
 function App() {
-  const { loading, planetData } = useContext(PlanetsContext);
+  const { loading } = useContext(PlanetsContext);
   return (
     <>
       <span>Hello, App!</span>
