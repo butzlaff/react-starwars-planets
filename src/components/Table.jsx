@@ -8,9 +8,9 @@ function Table() {
   const [filterName, setFilterName] = useState('');
   const [filteredPlanets, setFilteredPlanets] = useState([]);
   const [filters, setFilters] = useState({
-    filterColunm: 'population',
-    operator: 'maior que',
-    operatorValue: '0',
+    filterColunm: '',
+    operator: '',
+    operatorValue: '',
   });
 
   useEffect(() => {
@@ -44,32 +44,78 @@ function Table() {
     });
   };
 
-  const filterSelect = ['population',
+  const filterSelectInitial = ['population',
     'orbital_period', 'diameter',
     'rotation_period', 'surface_water'];
+
+  const [filterSelect, setFilterSelect] = useState(filterSelectInitial);
 
   const filterOperator = ['maior que',
     'menor que',
     'igual a'];
 
-  const filterData = () => {
-    const { filterColunm, operator, operatorValue } = filters;
-    setFilteredPlanets((prevState) => [...prevState, { ...filters }]);
-    let planets = [];
-    if (filteredPlanets.length > 0) {
-      planets = filterPlanets.map((item) => item);
-    } else {
-      planets = planetData.map((item) => item);
-    }
-    const filtered = planets.filter((planet) => {
-      if (operator === 'maior que') {
-        return (+planet[filterColunm]) > (+operatorValue);
-      } if (operator === 'menor que') {
-        return (+planet[filterColunm]) < (+operatorValue);
-      }
-      return (+planet[filterColunm]) === (+operatorValue);
+  const filterFilter = () => {
+    let newPlanetData = planetData.map((item) => item);
+    filteredPlanets.forEach((filter) => {
+      const planets = newPlanetData.filter((planet) => {
+        if (filter.operator === 'maior que') {
+          return (+planet[filter.filterColunm]) > (+filter.operatorValue);
+        } if (filter.operator === 'menor que') {
+          return (+planet[filter.filterColunm]) < (+filter.operatorValue);
+        }
+        return (+planet[filter.filterColunm]) === (+filter.operatorValue);
+      });
+      newPlanetData = planets.map((item) => (item));
     });
-    setFilterPlanets(filtered);
+    setFilterPlanets(newPlanetData);
+    const newSelect = filterSelect.map((item) => item);
+    setFilters({
+      filterColunm: newSelect[0],
+      operator: 'maior que',
+      operatorValue: '0',
+    });
+  };
+
+  useEffect(() => {
+    filterFilter();
+  }, [filteredPlanets]);
+
+  const deleteFiltered = (item) => {
+    const update = filteredPlanets.filter((filter) => filter.filterColunm !== item);
+    setFilteredPlanets(update);
+  };
+
+  const deleteAllFilters = () => {
+    const update = [];
+    setFilteredPlanets(update);
+    setFilterSelect(filterSelectInitial);
+  };
+
+  const filterData = () => {
+    const { filterColunm } = filters;
+    const newSelect = filterSelect.filter((item) => item !== filterColunm);
+    setFilteredPlanets((prevState) => [...prevState, { ...filters }]);
+    // let planets = [];
+    // if (filteredPlanets.length > 0) {
+    //   planets = filterPlanets.map((item) => item);
+    // } else {
+    //   planets = planetData.map((item) => item);
+    // }
+    // const filtered = planets.filter((planet) => {
+    //   if (operator === 'maior que') {
+    //     return (+planet[filterColunm]) > (+operatorValue);
+    //   } if (operator === 'menor que') {
+    //     return (+planet[filterColunm]) < (+operatorValue);
+    //   }
+    //   return (+planet[filterColunm]) === (+operatorValue);
+    // });
+    setFilterSelect(newSelect);
+    // setFilterPlanets(filtered);
+    // setFilters({
+    //   filterColunm: newSelect[0],
+    //   operator: 'maior que',
+    //   operatorValue: '0',
+    // });
   };
 
   return (
@@ -117,13 +163,19 @@ function Table() {
       </div>
       <div className="filters">
         {filteredPlanets.map((filter) => (
-          <div key={ filter.filterColunm }>
+          <div data-testid="filter" key={ filter.filterColunm }>
             <span>{filter.filterColunm}</span>
             <span>{filter.operator}</span>
             <span>{filter.operatorValue}</span>
-            <button>Delete</button>
+            <button onClick={ () => deleteFiltered(filter.filterColunm) }>Delete</button>
           </div>
         ))}
+        <button
+          data-testid="button-remove-filters"
+          onClick={ () => deleteAllFilters() }
+        >
+          Delete All Filters
+        </button>
       </div>
       <table className="table">
         <thead>

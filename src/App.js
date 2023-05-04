@@ -5,7 +5,6 @@ import { PlanetsContext } from './context/PlanetsProvider';
 
 function App() {
   const { loading, planetData } = useContext(PlanetsContext);
-  console.log(planetData);
   return (
     <>
       <span>Hello, App!</span>
